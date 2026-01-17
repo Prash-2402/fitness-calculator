@@ -76,6 +76,22 @@
             font-weight: 700;
             margin-left: 6px
         }
+
+        .info-btn {
+            background: none;
+            border: none;
+            color: #00ffcc;
+            font-size: 18px;
+            margin-left: 6px;
+            cursor: pointer
+        }
+
+        .activity-info {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #cfd8dc;
+            line-height: 1.4
+        }
     </style>
 </head>
 
@@ -90,13 +106,20 @@
             <input id="height" type="number">
             <label>Weight (kg)</label>
             <input id="weight" type="number">
-            <label>Activity</label>
+            <label>Activity <button type="button" class="info-btn"
+                    onclick="toggleActivityInfo()">ⓘ</button></label></label>
             <select id="activity">
                 <option value="1.2">Sedentary</option>
                 <option value="1.375">Light</option>
                 <option value="1.55">Moderate</option>
                 <option value="1.725">Very active</option>
             </select>
+            <div id="activityInfo" class="activity-info" style="display:none">
+                <p><b>Sedentary:</b> Desk job, less than 5k steps/day, no workouts.</p>
+                <p><b>Light:</b> 6–8k steps/day or light exercise 2–3×/week.</p>
+                <p><b>Moderate:</b> 8–12k steps/day + workouts 3–5×/week.</p>
+                <p><b>Very active:</b> Physical job or intense training most days.</p>
+            </div>
             <button id="calcBtn">Calculate</button>
         </div>
 
@@ -121,6 +144,11 @@
         const tdeeEl = document.getElementById('tdee');
         const targetEl = document.getElementById('target');
         const btn = document.getElementById('calcBtn');
+
+        function toggleActivityInfo() {
+            const box = document.getElementById('activityInfo');
+            box.style.display = box.style.display === 'none' ? 'block' : 'none';
+        }
 
         btn.addEventListener('click', () => {
             const age = Number(ageEl.value);
