@@ -2,9 +2,9 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fitness Calculator (Mobile Safe)</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fitness Calculator (Final Mobile First)</title>
     <style>
         body {
             margin: 0;
@@ -71,48 +71,34 @@
             font-size: 14px
         }
 
-        .info {
+        .good {
             color: #00ffcc;
-            font-weight: 700;
-            margin-left: 6px
+            font-size: 14px
         }
 
-        .info-btn {
-            background: none;
-            border: none;
+        summary {
+            cursor: pointer;
             color: #00ffcc;
-            font-size: 18px;
-            margin-left: 6px;
-            cursor: pointer
+            font-weight: 600
         }
 
         .activity-info {
-            margin-top: 8px;
             font-size: 14px;
             color: #cfd8dc;
-            line-height: 1.4
-        }
-
-        .activity-details {
+            line-height: 1.4;
             margin-top: 6px
         }
 
-        .activity-details summary {
-            list-style: none;
-            cursor: pointer;
-            color: #00ffcc;
-            font-weight: 600;
-            padding: 6px 0
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px
         }
 
-        .activity-details summary::-webkit-details-marker {
-            display: none
-        }
-
-        .activity-info {
-            font-size: 14px;
-            color: #cfd8dc;
-            line-height: 1.4
+        @media(max-width:600px) {
+            .row {
+                grid-template-columns: 1fr
+            }
         }
     </style>
 </head>
@@ -122,20 +108,40 @@
         <h1>Fitness Calculator</h1>
 
         <div class="card">
-            <label>Age</label>
-            <input id="age" type="number">
-            <label>Height (cm)</label>
-            <input id="height" type="number">
-            <label>Weight (kg)</label>
-            <input id="weight" type="number">
+            <label>Units</label>
+            <select id="unit">
+                <option value="metric">kg / cm</option>
+                <option value="imperial">lbs / inches</option>
+            </select>
+
+            <div class="row">
+                <div>
+                    <label>Gender</label>
+                    <select id="gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Age</label>
+                    <input id="age" type="number" />
+                </div>
+            </div>
+
+            <label id="hLabel">Height (cm)</label>
+            <input id="height" type="number" />
+
+            <label id="wLabel">Weight (kg)</label>
+            <input id="weight" type="number" />
+
             <label>Activity</label>
-            <details class="activity-details">
+            <details>
                 <summary>What does this mean? ⓘ</summary>
                 <div class="activity-info">
-                    <p><b>Sedentary:</b> Desk job, &lt;5k steps/day, no workouts.</p>
-                    <p><b>Light:</b> 6–8k steps/day or light exercise 2–3×/week.</p>
-                    <p><b>Moderate:</b> 8–12k steps/day + workouts 3–5×/week.</p>
-                    <p><b>Very active:</b> Physical job or intense training most days.</p>
+                    <p><b>Sedentary:</b> Desk job, &lt;5k steps/day.</p>
+                    <p><b>Light:</b> 6–8k steps/day or light workouts.</p>
+                    <p><b>Moderate:</b> 8–12k steps + 3–5 workouts/week.</p>
+                    <p><b>Very active:</b> Physical job or intense training.</p>
                 </div>
             </details>
             <select id="activity">
@@ -144,63 +150,104 @@
                 <option value="1.55">Moderate</option>
                 <option value="1.725">Very active</option>
             </select>
-            <div id="activityInfo" class="activity-info" style="display:none">
-                <p><b>Sedentary:</b> Desk job, less than 5k steps/day, no workouts.</p>
-                <p><b>Light:</b> 6–8k steps/day or light exercise 2–3×/week.</p>
-                <p><b>Moderate:</b> 8–12k steps/day + workouts 3–5×/week.</p>
-                <p><b>Very active:</b> Physical job or intense training most days.</p>
-            </div>
+
+            <label>Goal</label>
+            <select id="goal">
+                <option value="cut">Fat Loss</option>
+                <option value="maintain">Maintenance</option>
+                <option value="bulk">Muscle Gain</option>
+            </select>
+
             <button id="calcBtn">Calculate</button>
         </div>
 
         <div class="card" id="output" style="display:none">
-            <div class="result">BMI: <span id="bmi"></span></div>
-            <div class="result">BMR: <span id="bmr"></span></div>
-            <div class="result">TDEE: <span id="tdee"></span></div>
-            <div class="result">Calories (safe cut): <span id="target"></span></div>
-            <p class="warn">Healthy fat loss: 0.3–0.8 kg/week</p>
+            <h2>Results</h2>
+
+            <div class="result">
+                <b>BMI:</b> <span id="bmi"></span>
+                <details>
+                    <summary>What is BMI? ⓘ</summary>
+                    <div class="activity-info">BMI compares height to weight. It cannot distinguish fat vs muscle, so
+                        athletic people may show higher BMI.</div>
+                </details>
+            </div>
+
+            <div class="result">
+                <b>BMR:</b> <span id="bmr"></span>
+                <details>
+                    <summary>What is BMR? ⓘ</summary>
+                    <div class="activity-info">BMR is the minimum calories your body needs at rest. Eating below this
+                        long term harms hormones and recovery.</div>
+                </details>
+            </div>
+
+            <div class="result">
+                <b>TDEE:</b> <span id="tdee"></span>
+                <details>
+                    <summary>What is TDEE? ⓘ</summary>
+                    <div class="activity-info">TDEE is your true maintenance calories including activity. Fat loss or
+                        gain depends on calories relative to this.</div>
+                </details>
+            </div>
+
+            <div class="result">
+                <b>Target Calories:</b> <span id="target"></span>
+                <details>
+                    <summary>Why this number? ⓘ</summary>
+                    <div class="activity-info">This target is chosen to be safe. Faster cuts increase muscle loss and
+                        slow metabolism.</div>
+                </details>
+            </div>
+
+            <div class="result">
+                <b>Protein:</b> <span id="protein"></span> g/day
+                <details>
+                    <summary>Why protein matters ⓘ</summary>
+                    <div class="activity-info">Too little protein causes muscle loss, weakness, hair fall, poor
+                        recovery, and slower fat loss.</div>
+                </details>
+            </div>
+
+            <p class="good">Healthy fat loss: 0.3–0.8 kg/week</p>
+            <p class="warn">⚠ Do not cut calories aggressively. Large deficits increase muscle loss, fatigue, hormonal
+                issues, and rebound weight gain.</p>
+            <p class="warn">⚠ Minimum protein shown is to avoid muscle loss. Consistently eating less will ruin body
+                composition.</p>
+            <p class="good">Simple activity rules:</p>
+            <ul class="activity-info">
+                <li>Walk 7,000–10,000 steps daily</li>
+                <li>Strength train 3–5× per week</li>
+                <li>Avoid sitting longer than 90 minutes continuously</li>
+            </ul>
         </div>
     </div>
 
     <script>
-        // EXPLICIT DOM BINDING (MOBILE SAFE)
-        const ageEl = document.getElementById('age');
-        const heightEl = document.getElementById('height');
-        const weightEl = document.getElementById('weight');
-        const activityEl = document.getElementById('activity');
-        const outEl = document.getElementById('output');
-        const bmiEl = document.getElementById('bmi');
-        const bmrEl = document.getElementById('bmr');
-        const tdeeEl = document.getElementById('tdee');
-        const targetEl = document.getElementById('target');
-        const btn = document.getElementById('calcBtn');
+        const ageEl = age, heightEl = height, weightEl = weight, activityEl = activity, genderEl = gender, goalEl = goal, unitEl = unit;
+        const outEl = output, bmiEl = bmi, bmrEl = bmr, tdeeEl = tdee, targetEl = target, proteinEl = protein;
 
-        function toggleActivityInfo() {
-            const box = document.getElementById('activityInfo');
-            box.style.display = box.style.display === 'none' ? 'block' : 'none';
-        }
+        unitEl.addEventListener('change', () => {
+            if (unitEl.value === 'imperial') { hLabel.textContent = 'Height (inches)'; wLabel.textContent = 'Weight (lbs)' }
+            else { hLabel.textContent = 'Height (cm)'; wLabel.textContent = 'Weight (kg)' }
+        });
 
-        btn.addEventListener('click', () => {
-            const age = Number(ageEl.value);
-            const h = Number(heightEl.value);
-            const w = Number(weightEl.value);
-            const act = Number(activityEl.value);
+        calcBtn.addEventListener('click', () => {
+            let ageV = Number(ageEl.value), h = Number(heightEl.value), w = Number(weightEl.value);
+            if (!ageV || !h || !w) { alert('Fill all fields'); return }
+            if (unitEl.value === 'imperial') { h *= 2.54; w *= 0.4536 }
 
-            if (!age || !h || !w) {
-                alert('Fill all fields');
-                return;
-            }
+            const bmrV = genderEl.value === 'male' ? 10 * w + 6.25 * h - 5 * ageV + 5 : 10 * w + 6.25 * h - 5 * ageV - 161;
+            const tdeeV = Math.round(bmrV * Number(activityEl.value));
+            let targetV = tdeeV;
+            if (goalEl.value === 'cut') targetV = Math.round(tdeeV * 0.8);
+            if (goalEl.value === 'bulk') targetV = Math.round(tdeeV * 1.1);
 
-            const bmi = (w / ((h / 100) ** 2)).toFixed(1);
-            const bmr = 10 * w + 6.25 * h - 5 * age + 5;
-            const tdee = Math.round(bmr * act);
-            const target = Math.round(tdee - 500);
-
-            bmiEl.textContent = bmi;
-            bmrEl.textContent = Math.round(bmr);
-            tdeeEl.textContent = tdee;
-            targetEl.textContent = target;
-
+            bmiEl.textContent = (w / ((h / 100) ** 2)).toFixed(1);
+            bmrEl.textContent = Math.round(bmrV);
+            tdeeEl.textContent = tdeeV;
+            targetEl.textContent = targetV;
+            proteinEl.textContent = Math.round(1.2 * w);
             outEl.style.display = 'block';
             outEl.scrollIntoView({ behavior: 'smooth' });
         });
