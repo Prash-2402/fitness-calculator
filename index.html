@@ -1,292 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Complete Fitness Guide & Calculator</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Segoe UI, sans-serif;
-            background: #0b0d10;
-            color: #fff;
-            -webkit-tap-highlight-color: transparent
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: auto;
-            padding: 20px
-        }
-
-        h1,
-        h2 {
-            color: #00ffcc
-        }
-
-        .card {
-            background: rgba(255, 255, 255, .07);
-            border-radius: 18px;
-            padding: 22px;
-            margin-bottom: 22px;
-            transition: transform .15s ease, box-shadow .15s ease
-        }
-
-        .card:active {
-            transform: scale(.98);
-            box-shadow: 0 0 20px rgba(0, 255, 204, .25)
-        }
-
-        label {
-            display: block;
-            margin-top: 14px
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            border-radius: 8px;
-            border: none;
-            background: #1a1d23;
-            color: #fff
-        }
-
-        button {
-            margin-top: 22px;
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 18px;
-            background: linear-gradient(135deg, #00ffcc, #0077ff);
-            font-weight: 800;
-            font-size: 17px;
-            cursor: pointer;
-            transition: transform .1s ease, opacity .1s ease
-        }
-
-        button:active {
-            transform: scale(.96);
-            opacity: .9
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px
-        }
-
-        .result {
-            margin: 10px 0;
-            font-size: 16px
-        }
-
-        .info {
-            cursor: pointer;
-            color: #00ffcc;
-            margin-left: 6px;
-            font-size: 18px;
-            padding: 4px
-        }
-
-        .info:active {
-            transform: scale(1.2)
-        }
-
-        .warn {
-            color: #ffb703;
-            font-size: 14px;
-            margin-top: 6px
-        }
-
-        .danger {
-            color: #ff6b6b;
-            font-size: 14px;
-            margin-top: 6px
-        }
-
-        .good {
-            color: #00ffcc;
-            font-size: 14px;
-            margin-top: 6px
-        }
-
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .8);
-            display: none;
-            justify-content: center;
-            align-items: center
-        }
-
-        .modal-content {
-            background: #12151c;
-            padding: 24px;
-            border-radius: 16px;
-            max-width: 520px
-        }
-
-        @media(max-width:700px) {
-            .row {
-                grid-template-columns: 1fr
-            }
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Complete Fitness Guide & Calculator</title>
+<style>
+body{margin:0;font-family:Segoe UI,sans-serif;background:#0b0d10;color:#fff;-webkit-tap-highlight-color:transparent}
+.container{max-width:1100px;margin:auto;padding:20px}
+h1,h2{color:#00ffcc}
+.card{background:rgba(255,255,255,.07);border-radius:18px;padding:22px;margin-bottom:22px;transition:transform .15s ease,box-shadow .15s ease}
+.card:active{transform:scale(.98);box-shadow:0 0 20px rgba(0,255,204,.25)}
+label{display:block;margin-top:14px}
+input,select{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:none;background:#1a1d23;color:#fff}
+button{margin-top:22px;width:100%;padding:16px;border:none;border-radius:18px;background:linear-gradient(135deg,#00ffcc,#0077ff);font-weight:800;font-size:17px;cursor:pointer;transition:transform .1s ease,opacity .1s ease}
+button:active{transform:scale(.96);opacity:.9}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.result{margin:10px 0;font-size:16px}
+.info{cursor:pointer;color:#00ffcc;margin-left:6px;font-size:18px;padding:4px}
+.info:active{transform:scale(1.2)}
+.warn{color:#ffb703;font-size:14px;margin-top:6px}
+.danger{color:#ff6b6b;font-size:14px;margin-top:6px}
+.good{color:#00ffcc;font-size:14px;margin-top:6px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;justify-content:center;align-items:center}
+.modal-content{background:#12151c;padding:24px;border-radius:16px;max-width:520px}
+@media(max-width:700px){.row{grid-template-columns:1fr}}
+</style>
 </head>
-
 <body>
-    <div class="container">
-        <h1>Fitness Calculator & Education Platform</h1>
+<div class="container">
+<h1>Fitness Calculator & Education Platform</h1>
 
-        <div class="card">
-            <h2>Your Details</h2>
-            <label>Units</label>
-            <select id="unit" onchange="toggleUnits()">
-                <option value="metric">kg / cm</option>
-                <option value="imperial">lbs / ft-in</option>
-            </select>
+<div class="card">
+<h2>Your Details</h2>
+<label>Units</label>
+<select id="unit" onchange="toggleUnits()">
+<option value="metric">kg / cm</option>
+<option value="imperial">lbs / ft-in</option>
+</select>
 
-            <div class="row">
-                <div>
-                    <label>Gender</label>
-                    <select id="gender">
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Age</label>
-                    <input type="number" id="age" />
-                </div>
-            </div>
+<div class="row">
+<div>
+<label>Gender</label>
+<select id="gender"><option value="male">Male</option><option value="female">Female</option></select>
+</div>
+<div>
+<label>Age</label>
+<input type="number" id="age" />
+</div>
+</div>
 
-            <label id="hLabel">Height (cm)</label>
-            <input type="number" id="height" />
+<label id="hLabel">Height (cm)</label>
+<input type="number" id="height" />
 
-            <label id="wLabel">Weight (kg)</label>
-            <input type="number" id="weight" />
+<label id="wLabel">Weight (kg)</label>
+<input type="number" id="weight" />
 
-            <label>Activity Level <span class="info" onclick="explain('activity')">ⓘ</span></label>
-            <select id="activity">
-                <option value="1.2">Sedentary</option>
-                <option value="1.375">Lightly Active</option>
-                <option value="1.55">Moderately Active</option>
-                <option value="1.725">Very Active</option>
-            </select>
+<label>Activity Level <span class="info" onclick="toggleExplain('activity', this)">ⓘ</span></label>
+<select id="activity">
+<option value="1.2">Sedentary</option>
+<option value="1.375">Lightly Active</option>
+<option value="1.55">Moderately Active</option>
+<option value="1.725">Very Active</option>
+</select>
 
-            <label>Goal</label>
-            <select id="goal">
-                <option value="cut">Fat Loss</option>
-                <option value="maintain">Maintenance</option>
-                <option value="bulk">Muscle Gain</option>
-            </select>
+<label>Goal</label>
+<select id="goal">
+<option value="cut">Fat Loss</option>
+<option value="maintain">Maintenance</option>
+<option value="bulk">Muscle Gain</option>
+</select>
 
-            <button onclick="calculate();scrollToResults()">Calculate & Learn</button>
-        </div>
+<button onclick="handleCalculate()">Calculate & Learn</button>
+</div>
 
-        <div class="card" id="output" style="display:none">
-            <h2>Your Results Explained</h2>
+<div class="card" id="output" style="display:none">
+<h2>Your Results Explained</h2>
 
-            <div class="result">BMI: <span id="bmi"></span> <span class="info" onclick="explain('bmi')">ⓘ</span></div>
-            <div class="result">BMR: <span id="bmr"></span> kcal <span class="info" onclick="explain('bmr')">ⓘ</span>
-            </div>
-            <div class="result">Maintenance Calories (TDEE): <span id="tdee"></span> kcal <span class="info"
-                    onclick="explain('tdee')">ⓘ</span></div>
-            <div class="result">Recommended Intake: <span id="target"></span> kcal <span class="info"
-                    onclick="explain('target')">ⓘ</span></div>
+<div class="result">BMI: <span id="bmi"></span> <span class="info" onclick="explain('bmi')">ⓘ</span></div>
+<div class="result">BMR: <span id="bmr"></span> kcal <span class="info" onclick="explain('bmr')">ⓘ</span></div>
+<div class="result">Maintenance Calories (TDEE): <span id="tdee"></span> kcal <span class="info" onclick="explain('tdee')">ⓘ</span></div>
+<div class="result">Recommended Intake: <span id="target"></span> kcal <span class="info" onclick="explain('target')">ⓘ</span></div>
 
-            <p class="warn">Safe daily calorie deficit limit: <span id="safeCut"></span> kcal</p>
-            <p class="danger" id="dangerText"></p>
+<p class="warn">Safe daily calorie deficit limit: <span id="safeCut"></span> kcal</p>
+<p class="danger" id="dangerText"></p>
 
-            <div class="result">Protein Target (realistic): <span id="protein"></span> g/day <span class="info"
-                    onclick="explain('protein')">ⓘ</span></div>
-            <p class="warn">Bare minimum protein to avoid muscle loss: <span id="proteinMin"></span> g/day</p>
-            <p class="danger">Consistently low protein leads to muscle loss, weakness, fatigue, poor recovery, hormonal
-                issues and slower fat loss.</p>
+<div class="result">Protein Target (realistic): <span id="protein"></span> g/day <span class="info" onclick="explain('protein')">ⓘ</span></div>
+<p class="warn">Bare minimum protein to avoid muscle loss: <span id="proteinMin"></span> g/day</p>
+<p class="danger">Consistently low protein leads to muscle loss, weakness, fatigue, poor recovery, hormonal issues and slower fat loss.</p>
 
-            <div class="result">Expected fat loss speed: <span id="timeline"></span></div>
-            <p class="warn">Healthy fat loss range: 0.3 – 0.8 kg per week</p>
-            <p class="good">Simple activity rules: 7–10k steps/day • Strength train 3–5×/week • Avoid sitting >90 min
-                continuously</p>
-        </div>
-    </div>
+<div class="result">Expected fat loss speed: <span id="timeline"></span></div>
+<p class="warn">Healthy fat loss range: 0.3 – 0.8 kg per week</p>
+<p class="good">Simple activity rules: 7–10k steps/day • Strength train 3–5×/week • Avoid sitting >90 min continuously</p>
+</div>
+</div>
 
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <p id="modalText"></p>
-            <button onclick="closeModal()">Close</button>
-        </div>
-    </div>
+<div class="modal" id="modal">
+<div class="modal-content">
+<p id="modalText"></p>
+<button onclick="closeModal()">Close</button>
+</div>
+</div>
 
-    <script>
-        let metric = true;
+<script>
+let metric=true;
 
-        const explanations = {
-            bmi: 'BMI compares height to weight. It cannot distinguish fat from muscle. A muscular and obese person may share the same BMI.',
-            bmr: 'BMR is the minimum calories your body needs to keep organs and brain functioning. Eating below this long-term harms health.',
-            tdee: 'TDEE is your true daily maintenance calories. Weight change happens only when calories differ from this number.',
-            target: 'This calorie target is adjusted safely to support fat loss or muscle gain without damaging metabolism.',
-            protein: 'Protein supports muscle, recovery, immunity and metabolism. Fat mass does not need protein, but muscles do.',
-            activity: 'Sedentary: desk job, <5k steps, no workouts. Lightly active: 6–8k steps or light exercise. Moderately active: 8–12k steps + 3–5 workouts/week. Very active: physical job or intense training with high daily movement.'
-        };
+const explanations={
+  bmi:'BMI compares height to weight. It cannot distinguish fat from muscle. A muscular and obese person may share the same BMI.',
+  bmr:'BMR is the minimum calories your body needs to keep organs and brain functioning. Eating below this long-term harms health.',
+  tdee:'TDEE is your true daily maintenance calories. Weight change happens only when calories differ from this number.',
+  target:'This calorie target is adjusted safely to support fat loss or muscle gain without damaging metabolism.',
+  protein:'Protein supports muscle, recovery, immunity and metabolism. Fat mass does not need protein, but muscles do.',
+  activity:'Sedentary: desk job, <5k steps, no workouts. Lightly active: 6–8k steps or light exercise. Moderately active: 8–12k steps + 3–5 workouts/week. Very active: physical job or intense training with high daily movement.'
+};
 
-        function toggleUnits() {
-            metric = document.getElementById('unit').value === 'metric';
-            hLabel.textContent = metric ? 'Height (cm)' : 'Height (inches)';
-            wLabel.textContent = metric ? 'Weight (kg)' : 'Weight (lbs)';
-        }
+function toggleUnits(){
+  metric=document.getElementById('unit').value==='metric';
+  hLabel.textContent=metric?'Height (cm)':'Height (inches)';
+  wLabel.textContent=metric?'Weight (kg)':'Weight (lbs)';
+}
 
-) {
-            let age = +ageInput.value, h = +heightInput.value, w = +weightInput.value;
-            if (!metric) { h *= 2.54; w *= 0.4536; }
+function handleCalculate(){
+  calculate();
+  if(document.getElementById('output').style.display!=='none'){
+    document.getElementById('output').scrollIntoView({behavior:'smooth'});
+  }
+}
 
-            const genderVal = gender.value;
-            const act = +activity.value;
-            const goalVal = goal.value;
+function scrollToResults(){setTimeout(()=>{document.getElementById('output').scrollIntoView({behavior:'smooth'});},200)}
 
-            const bmi = (w / ((h / 100) ** 2)).toFixed(1);
-            const bmr = genderVal === 'male' ? (10 * w + 6.25 * h - 5 * age + 5) : (10 * w + 6.25 * h - 5 * age - 161);
-            const tdee = Math.round(bmr * act);
+function calculate(){
+  const ageVal = Number(ageInput.value);
+  const heightVal = Number(heightInput.value);
+  const weightVal = Number(weightInput.value);
 
-            let target = tdee;
-            if (goalVal === 'cut') target = tdee * 0.8;
-            if (goalVal === 'bulk') target = tdee * 1.1;
+  if(!ageVal || !heightVal || !weightVal){
+    alert('Please enter age, height and weight');
+    return;
+  }
 
-            const maxSafeCut = Math.round(w * 30);
-            const actualCut = Math.round(tdee - target);
+  let h = heightVal;
+  let w = weightVal;
+  if(!metric){ h = heightVal * 2.54; w = weightVal * 0.4536; }
 
-            const proteinMin = Math.round(0.8 * w);
-            const proteinRealistic = Math.round(1.2 * w);
+  const genderVal = gender.value;
+  const act = Number(activity.value);
+  const goalVal = goal.value;
 
-            const weeklyLoss = ((tdee - target) * 7 / 7700);
+  const bmiVal = (w / ((h/100)**2)).toFixed(1);
+  const bmrVal = genderVal === 'male'
+    ? (10*w + 6.25*h - 5*ageVal + 5)
+    : (10*w + 6.25*h - 5*ageVal - 161);
 
-            output.style.display = 'block';
-            bmiEl.textContent = bmi;
-            bmrEl.textContent = Math.round(bmr);
-            tdeeEl.textContent = tdee;
-            targetEl.textContent = Math.round(target);
-            proteinEl.textContent = proteinRealistic;
-            proteinMinEl.textContent = proteinMin;
-            safeCutEl.textContent = maxSafeCut;
-            timelineEl.textContent = weeklyLoss > 0 ? weeklyLoss.toFixed(2) + ' kg/week' : 'No fat loss expected';
+  const tdeeVal = Math.round(bmrVal * act);
+  let targetVal = tdeeVal;
+  if(goalVal === 'cut') targetVal = Math.round(tdeeVal * 0.8);
+  if(goalVal === 'bulk') targetVal = Math.round(tdeeVal * 1.1);
 
-            dangerText.textContent = actualCut > maxSafeCut ? '❌ Your calorie deficit is too aggressive and increases muscle loss & hormonal stress.' : '';
-        }
+  const maxSafeCutVal = Math.round(w * 30);
+  const actualCutVal = Math.round(tdeeVal - targetVal);
 
-        function explain(key) { modalText.textContent = explanations[key]; modal.style.display = 'flex' }
-        function closeModal() { modal.style.display = 'none' }
+  const proteinMinVal = Math.round(0.8 * w);
+  const proteinRealisticVal = Math.round(1.2 * w);
 
-        const ageInput = age, heightInput = height, weightInput = weight;
-        const gender = document.getElementById('gender');
-        const activity = document.getElementById('activity');
-        const goal = document.getElementById('goal');
-        const bmiEl = bmi, bmrEl = bmr, tdeeEl = tdee, targetEl = target;
-        const proteinEl = protein, proteinMinEl = proteinMin;
-        const safeCutEl = safeCut, timelineEl = timeline;
-    </script>
+  const weeklyLossVal = (tdeeVal - targetVal) * 7 / 7700;
+
+  output.style.display = 'block';
+
+  bmiEl.textContent = bmiVal;
+  bmrEl.textContent = Math.round(bmrVal);
+  tdeeEl.textContent = tdeeVal;
+  targetEl.textContent = targetVal;
+  proteinEl.textContent = proteinRealisticVal;
+  proteinMinEl.textContent = proteinMinVal;
+  safeCutEl.textContent = maxSafeCutVal;
+  timelineEl.textContent = weeklyLossVal > 0 ? weeklyLossVal.toFixed(2) + ' kg/week' : 'No fat loss expected';
+
+  dangerText.textContent = actualCutVal > maxSafeCutVal
+    ? '❌ Your calorie deficit is too aggressive and increases muscle loss & hormonal stress.'
+    : '';
+}
+
+function explain(key){modalText.textContent=explanations[key]; modal.style.display='flex'}
+function closeModal(){modal.style.display='none'}
+
+const ageInput=age,heightInput=height,weightInput=weight;
+const gender=document.getElementById('gender');
+const activity=document.getElementById('activity');
+const goal=document.getElementById('goal');
+const bmiEl=bmi,bmrEl=bmr,tdeeEl=tdee,targetEl=target;
+const proteinEl=protein,proteinMinEl=proteinMin;
+const safeCutEl=safeCut,timelineEl=timeline;
+</script>
 </body>
-
 </html>
