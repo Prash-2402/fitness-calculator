@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fitness Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0b0d10;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00ffcc;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: none;
+            background: #1a1d23;
+            color: white;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #00ffcc, #0077ff);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .info {
+            cursor: pointer;
+            color: #00ffcc;
+            margin-left: 6px;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #12151c;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 400px;
+        }
+
+        canvas {
+            max-width: 300px;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Fitness Calculator</h1>
+
+        <div class="card">
+            <label>Gender</label>
+            <select id="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+
+            <label>Age</label>
+            <input type="number" id="age" />
+
+            <label>Height (cm)</label>
+            <input type="number" id="height" />
+
+            <label>Weight (kg)</label>
+            <input type="number" id="weight" />
+
+            <label>Activity Level</label>
+            <select id="activity">
+                <option value="1.2">Sedentary</option>
+                <option value="1.375">Lightly Active</option>
+                <option value="1.55">Moderately Active</option>
+                <option value="1.725">Very Active</option>
+            </select>
+
+            <label>Goal</label>
+            <select id="goal">
+                <option value="cut">Fat Loss</option>
+                <option value="maintain">Maintenance</option>
+                <option value="bulk">Muscle Gain</option>
+            </select>
+
+            <button onclick="calculate()">Calculate</button>
+        </div>
+
+        <div class="card" id="output" style="display:none">
+            <div class="result">BMI: <span id="bmi"></span> <span class="info" onclick="explain('bmi')">ⓘ</span></div>
+            <div class="result">BMR: <span id="bmr"></span> <span class="info" onclick="explain('bmr')">ⓘ</span></div>
+            <div class="result">TDEE: <span id="tdee"></span> <span class="info" onclick="explain('tdee')">ⓘ</span>
+            </div>
+            <div class="result">Target Calories: <span id="target"></span> <span class="info"
+                    onclick="explain('target')">ⓘ</span></div>
+            <div class="result">Protein (g/day): <span id="protein"></span> <span class="info"
+                    onclick="explain('protein')">ⓘ</span></div>
+            <canvas id="macroChart"></canvas>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <p id="modalText"></p>
+            <button onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        let chart;
+        const explanations = {
+            bmi: 'BMI is a height-to-weight ratio used to broadly classify body weight. It does not account for muscle mass.',
+            bmr: 'BMR is the calories your body burns at complete rest just to stay alive.',
+            tdee: 'TDEE is your real maintenance calories including activity.',
+            target: 'This is the calorie number you should eat daily to reach your goal.',
+            protein: 'Protein helps preserve muscle, recover faster, and improve body composition.'
+        };
+
+        function calculate() {
+            const gender = document.getElementById('gender').value;
+            const age = +ageInput.value;
+            const height = +heightInput.value;
+            const weight = +weightInput.value;
+            const activity = +document.getElementById('activity').value;
+            const goal = document.getElementById('goal').value;
+
+            const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+            const bmr = gender === 'male'
+                ? (10 * weight + 6.25 * height - 5 * age + 5)
+                : (10 * weight + 6.25 * height - 5 * age - 161);
+
+            const tdee = Math.round(bmr * activity);
+            let target = tdee;
+            if (goal === 'cut') target -= 500;
+            if (goal === 'bulk') target += 300;
+
+            const protein = Math.round(weight * 2);
+            const carbs = Math.round((target * 0.45) / 4);
+            const fats = Math.round((target * 0.25) / 9);
+
+            document.getElementById('output').style.display = 'block';
+            animateValue('bmi', bmi);
+            animateValue('bmr', Math.round(bmr));
+            animateValue('tdee', tdee);
+            animateValue('target', target);
+            animateValue('protein', protein);
+
+            drawChart(protein, carbs, fats);
+        }
+
+        function animateValue(id, value) {
+            let start = 0;
+            const step = value / 40;
+            const el = document.getElementById(id);
+            const interval = setInterval(() => {
+                start += step;
+                if (start >= value) {
+                    el.textContent = value;
+                    clearInterval(interval);
+                } else el.textContent = Math.round(start);
+            }, 20);
+        }
+
+        function drawChart(p, c, f) {
+            if (chart) chart.destroy();
+            chart = new Chart(document.getElementById('macroChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Protein', 'Carbs', 'Fats'],
+                    datasets: [{ data: [p, c, f] }]
+                }
+            });
+        }
+
+        function explain(type) {
+            document.getElementById('modalText').textContent = explanations[type];
+            document.getElementById('modal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        const ageInput = document.getElementById('age');
+        const heightInput = document.getElementById('height');
+        const weightInput = document.getElementById('weight');
+    </script>
+</body>
+
+</html>
