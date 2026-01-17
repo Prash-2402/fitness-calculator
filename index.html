@@ -92,6 +92,28 @@
             color: #cfd8dc;
             line-height: 1.4
         }
+
+        .activity-details {
+            margin-top: 6px
+        }
+
+        .activity-details summary {
+            list-style: none;
+            cursor: pointer;
+            color: #00ffcc;
+            font-weight: 600;
+            padding: 6px 0
+        }
+
+        .activity-details summary::-webkit-details-marker {
+            display: none
+        }
+
+        .activity-info {
+            font-size: 14px;
+            color: #cfd8dc;
+            line-height: 1.4
+        }
     </style>
 </head>
 
@@ -106,8 +128,16 @@
             <input id="height" type="number">
             <label>Weight (kg)</label>
             <input id="weight" type="number">
-            <label>Activity <button type="button" class="info-btn"
-                    onclick="toggleActivityInfo()">ⓘ</button></label></label>
+            <label>Activity</label>
+            <details class="activity-details">
+                <summary>What does this mean? ⓘ</summary>
+                <div class="activity-info">
+                    <p><b>Sedentary:</b> Desk job, &lt;5k steps/day, no workouts.</p>
+                    <p><b>Light:</b> 6–8k steps/day or light exercise 2–3×/week.</p>
+                    <p><b>Moderate:</b> 8–12k steps/day + workouts 3–5×/week.</p>
+                    <p><b>Very active:</b> Physical job or intense training most days.</p>
+                </div>
+            </details>
             <select id="activity">
                 <option value="1.2">Sedentary</option>
                 <option value="1.375">Light</option>
