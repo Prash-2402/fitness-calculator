@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonFit | Workout Builder</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+</head>
+
+<body data-page="workout">
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">Neon<span>Fit</span></a>
+                <div class="nav-links">
+                    <a href="calculator.html">Calculator</a>
+                    <a class="active" href="workout.html">Workout Builder</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1>Workout Builder</h1>
+            <p class="subtitle">Pick a split, customize days, exercises, sets and reps — then start a workout session.</p>
+        </div>
+    </section>
+
+    <section id="workout">
+        <div class="container">
+            <h2>Build Your Training Split</h2>
+            <div class="planner-card">
+                <div class="planner-grid">
+                    <div class="form-group">
+                        <label for="splitType">Split Style</label>
+                        <select id="splitType">
+                            <option value="push_pull_legs">Push / Pull / Legs</option>
+                            <option value="upper_lower">Upper / Lower</option>
+                            <option value="full_body">Full Body</option>
+                            <option value="bro_split">Body-Part Split</option>
+                            <option value="custom">Custom (build your own)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Training Days</label>
+                        <div class="days-row">
+                            <label><input type="checkbox" class="day-toggle" value="0" checked> Mon</label>
+                            <label><input type="checkbox" class="day-toggle" value="1" checked> Tue</label>
+                            <label><input type="checkbox" class="day-toggle" value="2" checked> Wed</label>
+                            <label><input type="checkbox" class="day-toggle" value="3"> Thu</label>
+                            <label><input type="checkbox" class="day-toggle" value="4"> Fri</label>
+                            <label><input type="checkbox" class="day-toggle" value="5"> Sat</label>
+                            <label><input type="checkbox" class="day-toggle" value="6"> Sun</label>
+                        </div>
+                        <p class="helper-text">Generate a starting plan, then customize everything (days, exercises, sets, reps). Your plan auto-saves.</p>
+                    </div>
+                </div>
+
+                <div class="planner-actions">
+                    <button id="generatePlanBtn" class="calc-btn">Generate Plan</button>
+                    <button id="savePlanBtn" class="calc-btn calc-btn-muted" type="button">Save Plan</button>
+                    <button id="resetPlanBtn" class="calc-btn calc-btn-ghost" type="button">Reset</button>
+                </div>
+            </div>
+
+            <div id="workoutPlan" class="workout-plan"></div>
+            <div id="workoutCompleteBanner" class="workout-complete-banner" aria-live="polite"></div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 NeonFit. Stay consistent.</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>
+

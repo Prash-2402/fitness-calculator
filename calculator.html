@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonFit | Calculator</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+</head>
+
+<body data-page="calculator">
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">Neon<span>Fit</span></a>
+                <div class="nav-links">
+                    <a class="active" href="calculator.html">Calculator</a>
+                    <a href="workout.html">Workout Builder</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1>Nutrition Calculator</h1>
+            <p class="subtitle">Dial in calories and macros. Save your inputs automatically.</p>
+        </div>
+    </section>
+
+    <section id="calculator">
+        <div class="container">
+            <h2>Your Stats</h2>
+            <div class="calculator-card">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="unit">Unit System</label>
+                        <select id="unit">
+                            <option value="metric">Metric (kg / cm)</option>
+                            <option value="imperial">Imperial (lbs / inches)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" placeholder="e.g. 25">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="height">Height (cm)</label>
+                        <input type="number" id="height" placeholder="e.g. 180">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weight">Weight (kg)</label>
+                        <input type="number" id="weight" placeholder="e.g. 75">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="activity">Activity Level</label>
+                        <select id="activity">
+                            <option value="1.2">Sedentary (Office job, little exercise)</option>
+                            <option value="1.375">Light (1-3 days/week)</option>
+                            <option value="1.55">Moderate (3-5 days/week)</option>
+                            <option value="1.725">Very Active (6-7 days/week)</option>
+                            <option value="1.9">Super Active (Physical job + training)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="goal">Goal</label>
+                        <select id="goal">
+                            <option value="maintain">Maintain Weight</option>
+                            <option value="cut">Fat Loss (Cut)</option>
+                            <option value="bulk">Muscle Gain (Bulk)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="macroStyle">Macro Style</label>
+                        <select id="macroStyle">
+                            <option value="balanced">Balanced (30% P / 25% F / 45% C)</option>
+                            <option value="lowcarb">Lower Carb (30% P / 35% F / 35% C)</option>
+                            <option value="highcarb">Higher Carb (25% P / 20% F / 55% C)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="error" class="error-message" aria-live="polite"></div>
+                <button id="calcBtn" class="calc-btn">Calculate Macros</button>
+            </div>
+
+            <div id="results">
+                <h2>Your Blueprint</h2>
+                <div class="results-grid">
+                    <div class="result-card">
+                        <div class="result-label">Daily Calories</div>
+                        <div class="result-value" id="target">0</div>
+                        <div class="result-info">To reach your goal</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Protein Target</div>
+                        <div class="result-value" id="protein">0g</div>
+                        <div class="result-info">Suggested split</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Fats Target</div>
+                        <div class="result-value" id="fats">0g</div>
+                        <div class="result-info">Suggested split</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Carbs Target</div>
+                        <div class="result-value" id="carbs">0g</div>
+                        <div class="result-info">Suggested split</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">BMR</div>
+                        <div class="result-value" id="bmr">0</div>
+                        <div class="result-info">Calories at rest</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">TDEE</div>
+                        <div class="result-value" id="tdee">0</div>
+                        <div class="result-info">Maintenance calories</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">BMI</div>
+                        <div class="result-value" id="bmi">0</div>
+                        <div class="result-info" id="bmiInfo">Body Mass Index</div>
+                    </div>
+                </div>
+                <p id="summary" class="summary-text"></p>
+            </div>
+        </div>
+    </section>
+
+    <section id="info">
+        <div class="container">
+            <h2>Understand Your Numbers</h2>
+            <div class="grid">
+                <div class="info-card">
+                    <h3>BMR (Basal Metabolic Rate)</h3>
+                    <p>The number of calories your body burns at rest to maintain basic life functions like breathing and circulation.</p>
+                </div>
+                <div class="info-card">
+                    <h3>TDEE (Total Daily Energy Expenditure)</h3>
+                    <p>Your total calorie burn in a day, including exercise and daily movement. This is your “maintenance” number.</p>
+                </div>
+                <div class="info-card">
+                    <h3>BMI (Body Mass Index)</h3>
+                    <p>A simple height/weight ratio. Note: it doesn’t account for muscle mass.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 NeonFit. Stay consistent.</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>
+
