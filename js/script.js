@@ -1,8 +1,123 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    // ── Custom Themed Select Dropdowns ─────────────────────────────────────
+    // Replaces every <select> with a fully custom component.
+    // The hidden <select> stays in the DOM so all existing code referencing
+    // .value / addEventListener continues to work unchanged.
+    function initCustomSelects() {
+        document.querySelectorAll('select').forEach(function(sel) {
+            // Wrap the select
+            const wrapper = document.createElement('div');
+            wrapper.className = 'cx-select';
+
+            // Hide the real select but keep it functional
+            sel.classList.add('cx-select-hidden');
+            sel.parentNode.insertBefore(wrapper, sel);
+            wrapper.appendChild(sel);
+
+            // Trigger (visible button)
+            const trigger = document.createElement('div');
+            trigger.className = 'cx-select-trigger';
+
+            const label = document.createElement('span');
+            label.className = 'cx-select-label';
+            label.textContent = sel.options[sel.selectedIndex]?.text || '';
+
+            // Arrow SVG — use setAttribute for SVG className (SVGAnimatedString)
+            const arrow = document.createElementNS('http://www.w3.org/2000/svg','svg');
+            arrow.setAttribute('viewBox','0 0 20 20');
+            arrow.setAttribute('fill','currentColor');
+            arrow.setAttribute('width','16');
+            arrow.setAttribute('height','16');
+            arrow.setAttribute('class','cx-select-arrow');
+            arrow.style.cssText = 'width:16px;height:16px;flex-shrink:0;margin-left:10px;color:#b09898;transition:transform 280ms cubic-bezier(0.34,1.56,0.64,1);';
+            arrow.innerHTML = '<path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>';
+
+            trigger.appendChild(label);
+            trigger.appendChild(arrow);
+            wrapper.appendChild(trigger);
+
+            // Options panel
+            const panel = document.createElement('div');
+            panel.className = 'cx-select-panel';
+
+            Array.from(sel.options).forEach(function(opt, idx) {
+                const item = document.createElement('div');
+                item.className = 'cx-select-option' + (opt.selected ? ' selected' : '');
+                item.textContent = opt.text;
+                item.dataset.value = opt.value;
+
+                item.addEventListener('click', function() {
+                    // Update underlying select
+                    sel.value = opt.value;
+                    sel.dispatchEvent(new Event('change', { bubbles: true }));
+                    sel.dispatchEvent(new Event('input',  { bubbles: true }));
+
+                    // Update visible label
+                    label.textContent = opt.text;
+
+                    // Mark selected
+                    panel.querySelectorAll('.cx-select-option').forEach(function(el) {
+                        el.classList.toggle('selected', el === item);
+                    });
+
+                    closePanel();
+                });
+
+                panel.appendChild(item);
+            });
+
+            wrapper.appendChild(panel);
+
+            // Open / close
+            function openPanel() {
+                document.querySelectorAll('.cx-select.open').forEach(function(el) {
+                    if (el !== wrapper) {
+                        el.classList.remove('open');
+                        // Reset other arrows
+                        var otherArrow = el.querySelector('.cx-select-arrow');
+                        if (otherArrow) otherArrow.style.transform = 'rotate(0deg)';
+                    }
+                });
+                wrapper.classList.add('open');
+                arrow.style.transform = 'rotate(180deg)';
+            }
+            function closePanel() {
+                wrapper.classList.remove('open');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+
+            trigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                wrapper.classList.contains('open') ? closePanel() : openPanel();
+            });
+
+            // Sync external changes (e.g. restoreCalc sets sel.value directly)
+            sel.addEventListener('change', function() {
+                label.textContent = sel.options[sel.selectedIndex]?.text || '';
+                panel.querySelectorAll('.cx-select-option').forEach(function(el) {
+                    el.classList.toggle('selected', el.dataset.value === sel.value);
+                });
+            });
+        });
+
+        // Click outside closes all panels
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.cx-select.open').forEach(function(el) {
+                el.classList.remove('open');
+            });
+        });
+    }
+
+    initCustomSelects();
+
+    // ── End Custom Selects ─────────────────────────────────────────────────
+
     const STORAGE = {
         CALC: 'neonfit_calc_v1',
         PLAN: 'neonfit_plan_v1'
     };
+
 
     const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -103,7 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const weightInput = document.getElementById('weight');
         const activitySelect = document.getElementById('activity');
         const goalSelect = document.getElementById('goal');
-        const macroStyleSelect = document.getElementById('macroStyle');
 
         const heightLabel = document.querySelector('label[for="height"]');
         const weightLabel = document.querySelector('label[for="weight"]');
@@ -115,10 +229,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const tdeeVal = document.getElementById('tdee');
         const targetVal = document.getElementById('target');
         const proteinVal = document.getElementById('protein');
-        const fatsVal = document.getElementById('fats');
-        const carbsVal = document.getElementById('carbs');
         const summaryEl = document.getElementById('summary');
         const errorEl = document.getElementById('error');
+        const goalExplanation = document.getElementById('goalExplanation');
+        const goalExplanationTitle = document.getElementById('goalExplanationTitle');
+        const goalExplanationText = document.getElementById('goalExplanationText');
 
         function showError(message) {
             if (!errorEl) return;
@@ -141,37 +256,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function getBMICategory(bmi) {
-            if (bmi < 18.5) return { label: 'Underweight', note: 'Consider a gentle surplus.' };
-            if (bmi < 25) return { label: 'Normal', note: 'Great spot to build or lean out.' };
-            if (bmi < 30) return { label: 'Overweight', note: 'Slow, steady fat loss works best.' };
-            return { label: 'Obese', note: 'Prioritize sustainable fat loss and health.' };
+            if (bmi < 18.5) return { label: 'Underweight', note: 'Consider a gentle calorie surplus.' };
+            if (bmi < 25) return { label: 'Normal', note: 'Great range — build or lean out from here.' };
+            if (bmi < 30) return { label: 'Overweight', note: 'A steady calorie deficit will get you there.' };
+            return { label: 'Obese', note: 'Prioritise a sustainable deficit and consistency.' };
         }
 
-        function getMacroPercents(style) {
-            switch (style) {
-                case 'lowcarb':
-                    return { p: 0.3, f: 0.35, c: 0.35 };
-                case 'highcarb':
-                    return { p: 0.25, f: 0.2, c: 0.55 };
-                case 'balanced':
-                default:
-                    return { p: 0.3, f: 0.25, c: 0.45 };
+        function getGoalExplanation(goal, tdee, targetCalories, deficit) {
+            if (goal === 'cut') {
+                return {
+                    title: '🔥 You are in a Calorie Deficit',
+                    text: `Your TDEE is ${tdee} kcal — that\'s what your body burns daily. At ${targetCalories} kcal, you\'re eating ${deficit} calories less per day. That daily deficit forces your body to burn stored fat for energy. Every ~7,700 calorie deficit = roughly 1kg of fat lost. Stay consistent, hit your protein, and the fat goes — guaranteed.`
+                };
             }
-        }
-
-        function calculateMacros(targetCalories, style) {
-            const { p, f, c } = getMacroPercents(style);
+            if (goal === 'bulk') {
+                return {
+                    title: '💪 You are in a Calorie Surplus',
+                    text: `Your TDEE is ${tdee} kcal. At ${targetCalories} kcal you are eating ${Math.abs(deficit)} calories above maintenance. That surplus gives your body the extra energy to build muscle. Without a surplus, muscle gain is very slow. Keep protein high and the surplus modest to minimise fat gain alongside muscle.`
+                };
+            }
             return {
-                proteinG: Math.round((targetCalories * p) / 4),
-                fatsG: Math.round((targetCalories * f) / 9),
-                carbsG: Math.round((targetCalories * c) / 4)
+                title: '⚖️ You are Eating at Maintenance',
+                text: `At ${targetCalories} kcal you are matching what you burn (TDEE). Your weight will stay roughly the same. Maintenance is a great phase for building strength, recovering, or taking a diet break while keeping your results.`
             };
-        }
-
-        function getGoalText(goal) {
-            if (goal === 'cut') return 'lose fat';
-            if (goal === 'bulk') return 'build muscle';
-            return 'maintain your current weight';
         }
 
         function persistCalc() {
@@ -182,8 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 height: heightInput.value,
                 weight: weightInput.value,
                 activity: activitySelect.value,
-                goal: goalSelect.value,
-                macroStyle: macroStyleSelect.value
+                goal: goalSelect.value
             });
         }
 
@@ -197,7 +303,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.weight) weightInput.value = data.weight;
             if (data.activity) activitySelect.value = data.activity;
             if (data.goal) goalSelect.value = data.goal;
-            if (data.macroStyle) macroStyleSelect.value = data.macroStyle;
         }
 
         unitSelect?.addEventListener('change', () => {
@@ -215,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
             persistCalc();
         });
 
-        [genderSelect, ageInput, heightInput, weightInput, activitySelect, goalSelect, macroStyleSelect].forEach((el) => {
+        [genderSelect, ageInput, heightInput, weightInput, activitySelect, goalSelect].forEach((el) => {
             el?.addEventListener('input', persistCalc);
             el?.addEventListener('change', persistCalc);
         });
@@ -233,11 +338,10 @@ document.addEventListener('DOMContentLoaded', () => {
             let weight = parseFloat(weightInput.value);
             const gender = genderSelect.value;
             const activity = parseFloat(activitySelect.value);
-            const macroStyle = macroStyleSelect.value;
 
             if (!age || !height || !weight) return showError('Please fill in age, height, and weight.');
             if (age <= 0 || height <= 0 || weight <= 0) return showError('Values must be positive numbers.');
-            if (age < 14 || age > 80) return showError('This calculator is optimized for ages 14–80.');
+            if (age < 14 || age > 80) return showError('This calculator is optimised for ages 14–80.');
 
             if (unitSelect.value === 'imperial') {
                 height = height * 2.54;
@@ -251,22 +355,30 @@ document.addEventListener('DOMContentLoaded', () => {
             if (goalSelect.value === 'cut') targetCalories = Math.round(tdee * 0.8);
             else if (goalSelect.value === 'bulk') targetCalories = Math.round(tdee * 1.1);
 
+            // Protein: 1.8g per kg of bodyweight – evidence-based, simple
+            const proteinG = Math.round(weight * 1.8);
+
             const bmi = calculateBMI(weight, height);
             const bmiCategory = getBMICategory(bmi);
-            const { proteinG, fatsG, carbsG } = calculateMacros(targetCalories, macroStyle);
+            const deficit = tdee - targetCalories;
 
             bmiVal.textContent = bmi.toFixed(1);
             bmrVal.textContent = Math.round(bmr).toString();
             tdeeVal.textContent = tdee.toString();
             targetVal.textContent = targetCalories.toString();
             proteinVal.textContent = `${proteinG}g`;
-            fatsVal.textContent = `${fatsG}g`;
-            carbsVal.textContent = `${carbsG}g`;
             bmiInfo.textContent = `${bmiCategory.label} – ${bmiCategory.note}`;
 
-            const goalText = getGoalText(goalSelect.value);
+            // Goal explanation
+            if (goalExplanation && goalExplanationTitle && goalExplanationText) {
+                const { title, text } = getGoalExplanation(goalSelect.value, tdee, targetCalories, deficit);
+                goalExplanationTitle.textContent = title;
+                goalExplanationText.textContent = text;
+                goalExplanation.style.display = 'block';
+            }
+
             if (summaryEl) {
-                summaryEl.textContent = `To ${goalText}, aim for about ${targetCalories} kcal per day with roughly ${proteinG}g protein, ${fatsG}g fats, and ${carbsG}g carbs.`;
+                summaryEl.textContent = `Daily target: ${targetCalories} kcal • Protein goal: ${proteinG}g`;
             }
 
             resultsSection.style.display = 'block';
@@ -748,4 +860,64 @@ document.addEventListener('DOMContentLoaded', () => {
     initCalculator();
     initWorkoutBuilder();
     initWorkoutSession();
+
+    // ── Smooth global scroll ─────────────────────────────
+    document.documentElement.style.scrollBehavior = 'smooth';
+
+    // ── Header shadow on scroll ──────────────────────────
+    const header = document.querySelector('header');
+    if (header) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                header.style.background = 'rgba(4,0,0,0.72)';
+                header.style.boxShadow = '0 4px 24px rgba(0,0,0,0.55)';
+            } else {
+                header.style.background = 'rgba(4,0,0,0.48)';
+                header.style.boxShadow = 'none';
+            }
+        }, { passive: true });
+    }
+
+    // ── Staggered reveal for feature cards ──────────────
+    function initStaggerReveal(selector, delayStep) {
+        var els = document.querySelectorAll(selector);
+        if (!els.length) return;
+        var obs = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (!entry.isIntersecting) return;
+                var idx = Array.from(els).indexOf(entry.target);
+                entry.target.style.transitionDelay = (idx * delayStep) + 'ms';
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0) scale(1)';
+                obs.unobserve(entry.target);
+            });
+        }, { threshold: 0.08 });
+        els.forEach(function(el) {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(22px) scale(0.99)';
+            el.style.transition = 'opacity 0.42s cubic-bezier(0.16,1,0.3,1), transform 0.42s cubic-bezier(0.16,1,0.3,1)';
+            obs.observe(el);
+        });
+    }
+    initStaggerReveal('.feature-card', 100);
+
+    // ── Result cards staggered enter ─────────────────────
+    var calcBtn2 = document.getElementById('calcBtn');
+    if (calcBtn2) {
+        calcBtn2.addEventListener('click', function() {
+            requestAnimationFrame(function() {
+                var cards = document.querySelectorAll('.result-card');
+                cards.forEach(function(card, i) {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(16px) scale(0.98)';
+                    card.style.transition = 'none';
+                    requestAnimationFrame(function() {
+                        card.style.transition = 'opacity 0.36s cubic-bezier(0.16,1,0.3,1) ' + (i * 65) + 'ms, transform 0.36s cubic-bezier(0.16,1,0.3,1) ' + (i * 65) + 'ms';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0) scale(1)';
+                    });
+                });
+            });
+        }, { passive: true });
+    }
 });

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeonFit | Calculator</title>
+    <title>CalorieX | Calorie Calculator</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,10 +15,9 @@
     <header>
         <div class="container">
             <nav>
-                <a href="index.html" class="logo">Neon<span>Fit</span></a>
+                <a href="index.html" class="logo">Calorie<span>X</span></a>
                 <div class="nav-links">
                     <a class="active" href="calculator.html">Calculator</a>
-                    <a href="workout.html">Workout Builder</a>
                 </div>
             </nav>
         </div>
@@ -26,8 +25,8 @@
 
     <section class="page-hero">
         <div class="container">
-            <h1>Nutrition Calculator</h1>
-            <p class="subtitle">Dial in calories and macros. Save your inputs automatically.</p>
+            <h1>Calorie Calculator</h1>
+            <p class="subtitle">Find your TDEE, set your goal calories, and understand how fat loss actually works.</p>
         </div>
     </section>
 
@@ -45,7 +44,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="gender">Gender</label>
+                        <label for="gender">Biological Sex</label>
                         <select id="gender">
                             <option value="male">Male</option>
                             <option value="female">Female</option>
@@ -70,69 +69,50 @@
                     <div class="form-group full-width">
                         <label for="activity">Activity Level</label>
                         <select id="activity">
-                            <option value="1.2">Sedentary (Office job, little exercise)</option>
-                            <option value="1.375">Light (1-3 days/week)</option>
-                            <option value="1.55">Moderate (3-5 days/week)</option>
-                            <option value="1.725">Very Active (6-7 days/week)</option>
-                            <option value="1.9">Super Active (Physical job + training)</option>
+                            <option value="1.2">Sedentary (desk job, little movement)</option>
+                            <option value="1.375">Light (1–3 days/week active)</option>
+                            <option value="1.55">Moderate (3–5 days/week active)</option>
+                            <option value="1.725">Very Active (6–7 days/week)</option>
+                            <option value="1.9">Super Active (physical job + daily training)</option>
                         </select>
                     </div>
 
                     <div class="form-group full-width">
                         <label for="goal">Goal</label>
                         <select id="goal">
-                            <option value="maintain">Maintain Weight</option>
-                            <option value="cut">Fat Loss (Cut)</option>
-                            <option value="bulk">Muscle Gain (Bulk)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="macroStyle">Macro Style</label>
-                        <select id="macroStyle">
-                            <option value="balanced">Balanced (30% P / 25% F / 45% C)</option>
-                            <option value="lowcarb">Lower Carb (30% P / 35% F / 35% C)</option>
-                            <option value="highcarb">Higher Carb (25% P / 20% F / 55% C)</option>
+                            <option value="cut">🔥 Fat Loss — Calorie Deficit</option>
+                            <option value="maintain">⚖️ Maintenance — Eat at TDEE</option>
+                            <option value="bulk">💪 Weight Gain — Calorie Surplus</option>
                         </select>
                     </div>
                 </div>
 
                 <div id="error" class="error-message" aria-live="polite"></div>
-                <button id="calcBtn" class="calc-btn">Calculate Macros</button>
+                <button id="calcBtn" class="calc-btn">Calculate My Calories</button>
             </div>
 
             <div id="results">
-                <h2>Your Blueprint</h2>
+                <h2>Your Numbers</h2>
                 <div class="results-grid">
                     <div class="result-card">
-                        <div class="result-label">Daily Calories</div>
+                        <div class="result-label">Goal Calories</div>
                         <div class="result-value" id="target">0</div>
-                        <div class="result-info">To reach your goal</div>
-                    </div>
-                    <div class="result-card">
-                        <div class="result-label">Protein Target</div>
-                        <div class="result-value" id="protein">0g</div>
-                        <div class="result-info">Suggested split</div>
-                    </div>
-                    <div class="result-card">
-                        <div class="result-label">Fats Target</div>
-                        <div class="result-value" id="fats">0g</div>
-                        <div class="result-info">Suggested split</div>
-                    </div>
-                    <div class="result-card">
-                        <div class="result-label">Carbs Target</div>
-                        <div class="result-value" id="carbs">0g</div>
-                        <div class="result-info">Suggested split</div>
-                    </div>
-                    <div class="result-card">
-                        <div class="result-label">BMR</div>
-                        <div class="result-value" id="bmr">0</div>
-                        <div class="result-info">Calories at rest</div>
+                        <div class="result-info">Eat this daily</div>
                     </div>
                     <div class="result-card">
                         <div class="result-label">TDEE</div>
                         <div class="result-value" id="tdee">0</div>
-                        <div class="result-info">Maintenance calories</div>
+                        <div class="result-info">Your maintenance calories</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">BMR</div>
+                        <div class="result-value" id="bmr">0</div>
+                        <div class="result-info">Calories burned at rest</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Protein Goal</div>
+                        <div class="result-value" id="protein">0g</div>
+                        <div class="result-info">~1.6–2g per kg bodyweight</div>
                     </div>
                     <div class="result-card">
                         <div class="result-label">BMI</div>
@@ -140,6 +120,12 @@
                         <div class="result-info" id="bmiInfo">Body Mass Index</div>
                     </div>
                 </div>
+
+                <div class="goal-explanation" id="goalExplanation">
+                    <h3 id="goalExplanationTitle"></h3>
+                    <p id="goalExplanationText"></p>
+                </div>
+
                 <p id="summary" class="summary-text"></p>
             </div>
         </div>
@@ -147,19 +133,31 @@
 
     <section id="info">
         <div class="container">
-            <h2>Understand Your Numbers</h2>
+            <h2>How Fat Loss Actually Works</h2>
             <div class="grid">
                 <div class="info-card">
-                    <h3>BMR (Basal Metabolic Rate)</h3>
-                    <p>The number of calories your body burns at rest to maintain basic life functions like breathing and circulation.</p>
+                    <h3>🔥 Fat Loss = Calorie Deficit</h3>
+                    <p>Your body stores fat as an energy reserve. When you consistently eat <strong>fewer calories than you burn</strong> (your TDEE), your body taps into stored fat for fuel. Every 7,700 calories of deficit burns roughly 1kg of fat. There's no shortcut — the deficit is the mechanism.</p>
                 </div>
                 <div class="info-card">
-                    <h3>TDEE (Total Daily Energy Expenditure)</h3>
-                    <p>Your total calorie burn in a day, including exercise and daily movement. This is your “maintenance” number.</p>
+                    <h3>💪 Fat Gain = Calorie Surplus</h3>
+                    <p>When you eat <strong>more calories than your body needs</strong>, the excess energy gets converted to fat and stored. It doesn't matter if those calories come from "clean" food — a surplus is a surplus. Understanding this makes tracking calories the single most powerful lever you have.</p>
                 </div>
                 <div class="info-card">
-                    <h3>BMI (Body Mass Index)</h3>
-                    <p>A simple height/weight ratio. Note: it doesn’t account for muscle mass.</p>
+                    <h3>⚖️ Maintenance = Eat at TDEE</h3>
+                    <p>Your <strong>TDEE (Total Daily Energy Expenditure)</strong> is the number of calories you burn across everything — resting, moving, digesting food. Consistently eating at TDEE keeps your weight stable. This is your baseline. Go below it to lose, above it to gain.</p>
+                </div>
+                <div class="info-card">
+                    <h3>📊 BMR — The Foundation</h3>
+                    <p>Your <strong>Basal Metabolic Rate</strong> is how many calories your body burns just by existing — breathing, circulation, organ function. It's the floor. Your TDEE builds on top of it with your activity level multiplied in.</p>
+                </div>
+                <div class="info-card">
+                    <h3>🥩 Why Protein Matters</h3>
+                    <p>Protein preserves muscle mass during a deficit. Without enough protein, your body may break down muscle for energy alongside fat. Aim for <strong>1.6–2g per kg of bodyweight</strong>. It also keeps you fuller for longer — a huge advantage when cutting calories.</p>
+                </div>
+                <div class="info-card">
+                    <h3>⏱️ Rate of Loss</h3>
+                    <p>A <strong>500 calorie/day deficit</strong> creates a weekly deficit of ~3,500 kcal, roughly 0.5kg of fat/week. Faster is not always better — too aggressive a deficit risks muscle loss, energy crashes, and rebound eating. Sustainable beats fast every time.</p>
                 </div>
             </div>
         </div>
@@ -167,7 +165,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2024 NeonFit. Stay consistent.</p>
+            <p>&copy; 2024 CalorieX. Eat smart, stay consistent.</p>
         </div>
     </footer>
 
@@ -175,4 +173,3 @@
 </body>
 
 </html>
-
